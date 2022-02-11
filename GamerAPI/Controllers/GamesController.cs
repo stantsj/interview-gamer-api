@@ -1,23 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GamerAPI.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamerAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class GamesController : ControllerBase
     {
-        // GET: api/<GamesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IGameService _gameService;
+
+        public GamesController(IGameService gameService)
         {
-            return new string[] { "value1", "value2" };
+            _gameService = gameService;
         }
 
-        // GET api/<GamesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: /<Controller>
+        [HttpGet]
+        public async Task<IActionResult> GetGames([Required]string q, string? sort)
         {
-            return "value";
+            var games = await _gameService.GetGames(q, sort);
+            return Ok(games.Results);
         }
     }
 }

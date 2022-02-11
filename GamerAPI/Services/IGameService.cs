@@ -4,6 +4,6 @@ namespace GamerAPI.Services
 {
     public interface IGameService
     {
-        Task<IEnumerable<Game>> GetGames(string q, string sort);
+        Task<GameListResponse> GetGames(string query, string sort);
     }
 }
