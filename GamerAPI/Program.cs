@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using GamerAPI.Models;
 using GamerAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGameService, GameService>();
+
+builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 
 var app = builder.Build();
 

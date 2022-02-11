@@ -1,9 +1,19 @@
 ﻿using GamerAPI.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamerAPI.Services
 {
     public class UserService : IUserService
     {
+        private readonly DbContext _dbContext;
+
+        public UserService(DbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+
         public Task<HttpResponseMessage> DeleteUserGame(int gameId)
         {
             throw new NotImplementedException();
@@ -21,6 +31,10 @@ namespace GamerAPI.Services
 
         public Task<User> PostUser(User user)
         {
+            //_dbContext.Users.Add(user);
+            //var user = _dbContext.SaveChangesAsync();
+
+            //return user;
             throw new NotImplementedException();
         }
 

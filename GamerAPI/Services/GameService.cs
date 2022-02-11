@@ -25,11 +25,13 @@ namespace GamerAPI.Services
             };
         }
 
+        // TODO: Return a 400 Bad Request response if the q query parameter is missing, if the q query parameter is empty, or if the sort query parameter is invalid.
+        // TODO: The RAWG API returns lots of game metadata. Your responses should only include the JSON properties shown in the example.
         public async Task<GameListResponse> GetGames(string q, string sort = "")
         {
             var url = BuildUrl(q);
 
-            // TODO: validate the sort
+            // TODO: validate the sort - Any value supported by the RAWG API method should be supported here (e.g. name, -name).
             if (!string.IsNullOrEmpty(sort))
             {
                 url += $"&ordering={sort}";
