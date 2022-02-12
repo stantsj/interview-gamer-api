@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 

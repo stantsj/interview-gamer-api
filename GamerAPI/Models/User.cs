@@ -3,6 +3,6 @@
     public class User
     {
         public int UserId { get; set; }
-        public IEnumerable<Game> Games { get; set; }
+        public List<Game> Games { get; set; } = new List<Game>();
     }
 }

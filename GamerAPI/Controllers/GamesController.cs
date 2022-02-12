@@ -1,4 +1,5 @@
-﻿using GamerAPI.Services;
+﻿using GamerAPI.Models;
+using GamerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,10 +18,25 @@ namespace GamerAPI.Controllers
 
         // GET: /<Controller>
         [HttpGet]
-        public async Task<IActionResult> GetGames([Required]string q, string? sort)
+        public async Task<ActionResult<GameListResponse>> GetGames([Required]string q, string? sort)
         {
             var games = await _gameService.GetGames(q, sort);
+
             return Ok(games.Results);
+        }
+
+        // GET: /games/12345
+        [HttpGet("{gameId}")]
+        public async Task<ActionResult<Game>> GetGame(int gameId)
+        {
+            var game = await _gameService.GetGame(gameId);
+
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(game);
         }
     }
 }

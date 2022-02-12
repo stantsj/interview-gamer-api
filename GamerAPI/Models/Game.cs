@@ -1,4 +1,7 @@
-﻿namespace GamerAPI.Models
+﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GamerAPI.Models
 {
     public class Game
     {

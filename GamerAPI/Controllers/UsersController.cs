@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GamerAPI.Models;
+using GamerAPI.Services;
+using System.Net;
 
 namespace GamerAPI.Controllers
 {
@@ -15,24 +17,26 @@ namespace GamerAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(UserContext context)
+        public UsersController(UserContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET: Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _userService.GetUsers();
         }
 
         // GET: Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userService.GetUser(id);
 
             if (user == null)
             {
@@ -42,46 +46,34 @@ namespace GamerAPI.Controllers
             return user;
         }
 
-        // PUT: Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.UserId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // TODO: To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var res = await _userService.PostUser(user);
+            return CreatedAtAction("GetUser", new { id = res.UserId }, res);
+        }
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+        // POST: /users/:userId/games
+        [HttpPost("{userId}/games")]
+        public async Task<ActionResult<User>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
+        {
+            var res = await _userService.PostUserGame(userId, gameRequestDTO);
+
+            switch(res)
+            {
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.BadRequest:
+                    return BadRequest();
+                case HttpStatusCode.Conflict:
+                    return Conflict();
+                case HttpStatusCode.NoContent:
+                    return NoContent();
+                default:
+                    return NotFound();
+            }
         }
 
         // DELETE: Users/5
