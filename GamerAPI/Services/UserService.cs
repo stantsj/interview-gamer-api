@@ -27,7 +27,7 @@ namespace GamerAPI.Services
             return await _context.Users.FindAsync(userId);
         }
 
-        public Task<UserGameComparisonDTO> GetUserGameComparison(int userId, int otherUserId, string comparison)
+        public async Task<UserGameComparisonResponseDTO> GetUserGameComparison(int userId, int otherUserId, string comparison)
         {
             throw new NotImplementedException();
         }

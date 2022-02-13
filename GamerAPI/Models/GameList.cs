@@ -1,6 +1,6 @@
 ﻿namespace GamerAPI.Models
 {
-    public class GameListResponse
+    public class GameList
     {
         public int Count { get; set; }
         public string Next { get; set; }

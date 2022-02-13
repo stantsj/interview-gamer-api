@@ -11,6 +11,6 @@ namespace GamerAPI.Services
         Task<User> PostUser(User user);
         Task<HttpStatusCode> PostUserGame(int gameId, GameRequestDTO gameRequestDTO);
         Task<HttpStatusCode> DeleteUserGame(int userId,int gameId);
-        Task<UserGameComparisonDTO> GetUserGameComparison(int userId, int otherUserId, string comparison);
+        Task<UserGameComparisonResponseDTO> GetUserGameComparison(int userId, int otherUserId, string comparison);
     }
 }

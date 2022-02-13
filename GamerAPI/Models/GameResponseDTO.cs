@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GamerAPI.Models
 {
-    public class GameRequestDTO
+    public class GameResponseDTO
     {
-        public int GameId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public int Added { get; set; }
         public int? Metacritic { get; set; }

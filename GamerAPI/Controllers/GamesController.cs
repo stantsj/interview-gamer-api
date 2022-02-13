@@ -18,7 +18,7 @@ namespace GamerAPI.Controllers
 
         // GET: /<Controller>
         [HttpGet]
-        public async Task<ActionResult<GameListResponse>> GetGames([Required]string q, string? sort)
+        public async Task<ActionResult<GameList>> GetGames([Required]string q, string? sort)
         {
             var games = await _gameService.GetGames(q, sort);
 

@@ -1,6 +1,6 @@
 ﻿namespace GamerAPI.Models
 {
-    public class UserGameComparisonDTO
+    public class UserGameComparisonResponseDTO
     {
         public int UserId { get; set; }
         public int OtherUserId { get; set; }
