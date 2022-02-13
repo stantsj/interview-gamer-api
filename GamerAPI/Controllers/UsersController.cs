@@ -76,6 +76,27 @@ namespace GamerAPI.Controllers
             }
         }
 
+        // POST: users/:userId/comparison
+        [HttpPost("{userId}/comparison")]
+        public async Task<ActionResult<UserGameComparisonResponseDTO>> PostUserGameComparison(int userId, UserGameComparisonRequestDTO userGameComparisonRequestDTO)
+        {
+            var res = await _userService.GetUserGameComparison(userId, userGameComparisonRequestDTO);
+            
+            switch (res.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.BadRequest:
+                    return BadRequest();
+                case HttpStatusCode.Conflict:
+                    return Conflict();
+                case HttpStatusCode.OK:
+                    return Ok(res.ReturnObject);
+                default:
+                    return NotFound();
+            }
+        }
+
         // DELETE: users/:userId/games/:gameId
         [HttpDelete("{userId}/games/{gameId}")]
         public async Task<IActionResult> DeleteUserGame(int userId, int gameId)

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GamerAPI.Models
 {
-    public class Game
+    public record Game
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -27,9 +27,55 @@ namespace GamerAPI.Services
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task<UserGameComparisonResponseDTO> GetUserGameComparison(int userId, int otherUserId, string comparison)
+        public async Task<ServiceResult<UserGameComparisonResponseDTO>> GetUserGameComparison(int userId, UserGameComparisonRequestDTO request)
         {
-            throw new NotImplementedException();
+            var serviceResult = new ServiceResult<UserGameComparisonResponseDTO>();
+
+            // Return a 404 Not Found response if a user matching userId (in the URL) does not exist.
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
+            }
+
+            // Return a 400 Bad Request response if a user matching otherUserId (in the request body) does not exist
+            // Return a 400 Bad Request if comparison (in the request body) is invalid.
+            var otherUser = await _context.Users.FindAsync(request.OtherUserId);
+            var comparison = request.Comparison;
+
+            if (otherUser == null || !ValidateUserComparisonRequest(comparison))
+            {
+                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+                return serviceResult;
+            }
+
+            var returnObject = new UserGameComparisonResponseDTO();
+
+            returnObject.UserId = userId;
+            returnObject.OtherUserId = request.OtherUserId;
+            returnObject.Comparison = comparison;
+
+            switch (comparison)
+            {
+                case "difference":
+                    var list1 = user.Games.Except(otherUser.Games).ToList();
+                    var list2 = otherUser.Games.Except(user.Games).ToList();
+                    returnObject.Games = list1.Concat(list2).ToList();
+                    break;
+                case "intersection":
+                    returnObject.Games = user.Games.Intersect(otherUser.Games).ToList();
+                    break;
+                case "union":
+                    returnObject.Games = user.Games.Union(otherUser.Games).ToList();
+                    break;
+            }
+
+            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.ReturnObject = returnObject;
+
+            return serviceResult;
         }
 
         public async Task<User> PostUser(User user)
@@ -102,6 +148,12 @@ namespace GamerAPI.Services
             {
                 return HttpStatusCode.Conflict;
             }
+        }
+
+        private bool ValidateUserComparisonRequest(string comparison)
+        {
+            var comparisons = new [] {"union", "intersection", "difference"};
+            return comparisons.Any(comparison.ToLower().Contains);
         }
     }
 }
