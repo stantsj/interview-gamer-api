@@ -21,14 +21,10 @@ namespace GamerAPI.Services
             return await _context.Users.ToListAsync();
         }
 
+        // Get a user matching the specified userId.
         public async Task<User> GetUser(int userId)
         {
             return await _context.Users.FindAsync(userId);
-        }
-
-        public Task<HttpResponseMessage> DeleteUserGame(int gameId)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<UserGameComparisonDTO> GetUserGameComparison(int userId, int otherUserId, string comparison)
@@ -43,6 +39,7 @@ namespace GamerAPI.Services
             return user;
         }
 
+        // Add a game to the user's list of favorite games.
         public async Task<HttpStatusCode> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
             // Check to see if the user exists
@@ -69,7 +66,39 @@ namespace GamerAPI.Services
                 await _context.SaveChangesAsync();
                 return HttpStatusCode.NoContent;
             }
-            catch (Exception ex)
+            catch
+            {
+                return HttpStatusCode.Conflict;
+            }
+        }
+
+        // Remove a game from the user's list of favorite games.
+        public async Task<HttpStatusCode> DeleteUserGame(int userId, int gameId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            // Check to see if the user exists
+            if (user == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            // Remove a game from the user's list
+            var game = user.Games.Find(x=> x.Id == gameId);
+
+            // Return 404 if no game is found
+            if (game == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            try
+            {
+                user.Games.Remove(game);
+                await _context.SaveChangesAsync();
+                return HttpStatusCode.NoContent;
+            }
+            catch
             {
                 return HttpStatusCode.Conflict;
             }

@@ -25,14 +25,14 @@ namespace GamerAPI.Controllers
             _userService = userService;
         }
 
-        // GET: Users
+        // GET: users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _userService.GetUsers();
         }
 
-        // GET: Users/5
+        // GET: users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -46,16 +46,16 @@ namespace GamerAPI.Controllers
             return user;
         }
 
-        // POST: Users
+        // POST: users
         // TODO: To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            var res = await _userService.PostUser(user);
-            return CreatedAtAction("GetUser", new { id = res.UserId }, res);
+            var response = await _userService.PostUser(user);
+            return CreatedAtAction("GetUser", new { id = response.UserId }, response);
         }
 
-        // POST: /users/:userId/games
+        // POST: users/:userId/games
         [HttpPost("{userId}/games")]
         public async Task<ActionResult<User>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
@@ -76,25 +76,23 @@ namespace GamerAPI.Controllers
             }
         }
 
-        // DELETE: Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        // DELETE: users/:userId/games/:gameId
+        [HttpDelete("{userId}/games/{gameId}")]
+        public async Task<IActionResult> DeleteUserGame(int userId, int gameId)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var res = await _userService.DeleteUserGame(userId, gameId);
+
+            switch (res)
             {
-                return NotFound();
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.Conflict:
+                    return Conflict();
+                case HttpStatusCode.NoContent:
+                    return NoContent();
+                default:
+                    return NotFound();
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
         }
     }
 }
