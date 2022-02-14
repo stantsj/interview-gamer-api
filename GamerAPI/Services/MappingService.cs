@@ -49,5 +49,39 @@ namespace GamerAPI.Services
             gamesResponseDTO.Results = results;
             return gamesResponseDTO;
         }
+
+        public UserResponseDTO UserToUserResponseDTO(User user)
+        {
+            var userResponseDTO = new UserResponseDTO();
+
+            userResponseDTO.UserId = user.UserId;
+
+            var games = user.Games.Select(g => new GameResponseDTO()
+            {
+                GameId = g.Id,
+                Name = g.Name,
+                Added = g.Added,
+                Metacritic = g.Metacritic,
+                Rating = g.Rating,
+                Released = g.Released,
+                Updated = g.Updated
+            });
+
+            userResponseDTO.Games = games.ToList();
+
+            return userResponseDTO;
+        }
+
+        public List<GameResponseDTO> GamesListToGamesResponseDTOList(List<Game> games)
+        {
+            var list = new List<GameResponseDTO>();
+
+            foreach (var game in games)
+            {
+                list.Add(GameToGameResponseDTO(game));
+            }
+
+            return list;
+        }
     }
 }

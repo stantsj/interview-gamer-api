@@ -1,5 +1,4 @@
 ﻿using GamerAPI.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
@@ -18,37 +17,45 @@ namespace GamerAPI.Services
             _mappingService = mappingService;
         }
 
-        public async Task<ServiceResult<List<User>>> GetUsers()
+        public async Task<ServiceResult<List<UserResponseDTO>>> GetUsers()
         {
-            var serviceResult = new ServiceResult<List<User>>();
+            var serviceResult = new ServiceResult<List<UserResponseDTO>>();
+            var list = new List<UserResponseDTO>();
 
             var users = await _context.Users.ToListAsync();
 
             if (users == null)
             {
                 serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
+            }
+
+            foreach(var user in users)
+            {
+                list.Add(_mappingService.UserToUserResponseDTO(user));
             }
 
             serviceResult.StatusCode = HttpStatusCode.OK;
-            serviceResult.ReturnObject = users;
+            serviceResult.ReturnObject = list;
 
             return serviceResult;
         }
 
         // Get a user matching the specified userId.
-        public async Task<ServiceResult<User>> GetUser(int userId)
+        public async Task<ServiceResult<UserResponseDTO>> GetUser(int userId)
         {
-            var serviceResult = new ServiceResult<User>();
+            var serviceResult = new ServiceResult<UserResponseDTO>();
 
             var user = await _context.Users.FindAsync(userId);
 
             if (user == null)
             {
                 serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
             }
 
             serviceResult.StatusCode = HttpStatusCode.OK;
-            serviceResult.ReturnObject = user;
+            serviceResult.ReturnObject = _mappingService.UserToUserResponseDTO(user);
 
             return serviceResult;
         }
@@ -88,13 +95,16 @@ namespace GamerAPI.Services
                 case "difference":
                     var list1 = user.Games.Except(otherUser.Games).ToList();
                     var list2 = otherUser.Games.Except(user.Games).ToList();
-                    returnObject.Games = list1.Concat(list2).ToList();
+                    var difference = list1.Concat(list2).ToList();
+                    returnObject.Games = _mappingService.GamesListToGamesResponseDTOList(difference);
                     break;
                 case "intersection":
-                    returnObject.Games = user.Games.Intersect(otherUser.Games).ToList();
+                    var intersection = user.Games.Intersect(otherUser.Games).ToList();
+                    returnObject.Games = _mappingService.GamesListToGamesResponseDTOList(intersection);
                     break;
                 case "union":
-                    returnObject.Games = user.Games.Union(otherUser.Games).ToList();
+                    var union = user.Games.Union(otherUser.Games).ToList();
+                    returnObject.Games = _mappingService.GamesListToGamesResponseDTOList(union);
                     break;
             }
 
@@ -104,16 +114,22 @@ namespace GamerAPI.Services
             return serviceResult;
         }
 
-        public async Task<ServiceResult<User>> PostUser(User user)
+        public async Task<ServiceResult<UserResponseDTO>> PostUser(UserRequestDTO userRequestDTO)
         {
-            var serviceResult = new ServiceResult<User>();
+            var serviceResult = new ServiceResult<UserResponseDTO>();
+
+            var user = new User()
+            {
+                UserId = userRequestDTO.UserId,
+                Secret = "ADDSECRET"
+            };
 
             try
             {
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 serviceResult.StatusCode = HttpStatusCode.Created;
-                serviceResult.ReturnObject = user;
+                serviceResult.ReturnObject = _mappingService.UserToUserResponseDTO(user);
             }
             catch (Exception ex)
             {
@@ -124,9 +140,9 @@ namespace GamerAPI.Services
         }
 
         // Add a game to the user's list of favorite games.
-        public async Task<ServiceResult<User>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
+        public async Task<ServiceResult<UserResponseDTO>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
-            var serviceResult = new ServiceResult<User>();
+            var serviceResult = new ServiceResult<UserResponseDTO>();
 
             // Check to see if the user exists
             var user = await _context.Users.FindAsync(userId);
@@ -165,9 +181,9 @@ namespace GamerAPI.Services
         }
 
         // Remove a game from the user's list of favorite games.
-        public async Task<ServiceResult<User>> DeleteUserGame(int userId, int gameId)
+        public async Task<ServiceResult<UserResponseDTO>> DeleteUserGame(int userId, int gameId)
         {
-            var serviceResult = new ServiceResult<User>();
+            var serviceResult = new ServiceResult<UserResponseDTO>();
 
             var user = await _context.Users.FindAsync(userId);
 

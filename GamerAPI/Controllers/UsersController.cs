@@ -25,7 +25,7 @@ namespace GamerAPI.Controllers
 
         // GET: users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUsers()
         {
             var res = await _userService.GetUsers();
 
@@ -42,7 +42,7 @@ namespace GamerAPI.Controllers
 
         // GET: users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDTO>> GetUser(int id)
         {
             var res = await _userService.GetUser(id);
 
@@ -58,11 +58,10 @@ namespace GamerAPI.Controllers
         }
 
         // POST: users
-        // TODO: To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<UserResponseDTO>> PostUser(UserRequestDTO userRequestDTO)
         {
-            var res = await _userService.PostUser(user);
+            var res = await _userService.PostUser(userRequestDTO);
 
             switch (res.StatusCode)
             {
