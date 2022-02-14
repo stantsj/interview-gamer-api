@@ -136,9 +136,9 @@ namespace GamerAPI.Services
             }
 
             // Check to see if the game exists
-            var game = await _gameService.GetGame(gameRequestDTO.GameId);
+            var res = await _gameService.GetGame(gameRequestDTO.GameId);
 
-            if (game == null)
+            if (res.ReturnObject == null)
             {
                 serviceResult.StatusCode = HttpStatusCode.BadRequest;
                 return serviceResult;
@@ -147,7 +147,7 @@ namespace GamerAPI.Services
             // Check to see if the user already has the game
             try
             {
-                user.Games.Add(game);
+                user.Games.Add(res.ReturnObject);
                 _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 serviceResult.StatusCode = HttpStatusCode.NoContent;

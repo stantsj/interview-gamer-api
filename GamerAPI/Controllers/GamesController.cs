@@ -2,6 +2,7 @@
 using GamerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace GamerAPI.Controllers
 {
@@ -20,23 +21,34 @@ namespace GamerAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<GameList>> GetGames([Required]string q, string? sort)
         {
-            var games = await _gameService.GetGames(q, sort);
+            var res = await _gameService.GetGames(q, sort);
 
-            return Ok(games.Results);
+            switch (res.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.OK:
+                    return Ok(res.ReturnObject.Results);
+                default:
+                    return NotFound();
+            }
         }
 
         // GET: /games/12345
         [HttpGet("{gameId}")]
         public async Task<ActionResult<Game>> GetGame(int gameId)
-        {
-            var game = await _gameService.GetGame(gameId);
+        { 
+            var res = await _gameService.GetGame(gameId);
 
-            if (game == null)
+            switch (res.StatusCode)
             {
-                return NotFound();
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.OK:
+                    return Ok(res.ReturnObject);
+                default:
+                    return NotFound();
             }
-
-            return Ok(game);
         }
     }
 }

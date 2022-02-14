@@ -1,5 +1,6 @@
 ﻿using GamerAPI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Text.Json;
 
 namespace GamerAPI.Services
@@ -26,24 +27,34 @@ namespace GamerAPI.Services
             };
         }
 
-        public async Task<Game> GetGame(int gameId)
+        public async Task<ServiceResult<Game>> GetGame(int gameId)
         {
+            var serviceResult = new ServiceResult<Game>();
+
             var url = BuildUrl($"games/{gameId}");
 
             var res = await _httpClient.GetAsync(url);
 
             if (res.IsSuccessStatusCode)
             {
-                return await res.Content.ReadFromJsonAsync<Game>();
+                var game = await res.Content.ReadFromJsonAsync<Game>();
+                serviceResult.StatusCode = HttpStatusCode.OK;
+                serviceResult.ReturnObject = game;
+            } 
+            else
+            {
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
             }
 
-            return null;
+            return serviceResult;
         }
 
         // TODO: Return a 400 Bad Request response if the q query parameter is missing, if the q query parameter is empty, or if the sort query parameter is invalid.
         // TODO: The RAWG API returns lots of game metadata. Your responses should only include the JSON properties shown in the example.
-        public async Task<GameList> GetGames(string q, string sort = "")
+        public async Task<ServiceResult<GameList>> GetGames(string q, string sort = "")
         {
+            var serviceResult = new ServiceResult<GameList>();
+
             var url = BuildUrl("games", $"&search={q}");
 
             // TODO: validate the sort - Any value supported by the RAWG API method should be supported here (e.g. name, -name).
@@ -52,7 +63,20 @@ namespace GamerAPI.Services
                 url += $"&ordering={sort}";
             }
 
-            return await _httpClient.GetFromJsonAsync<GameList>(url);
+            var res = await _httpClient.GetAsync(url);
+
+            if (res.IsSuccessStatusCode)
+            {
+                var gameList = await res.Content.ReadFromJsonAsync<GameList>();
+                serviceResult.StatusCode = HttpStatusCode.OK;
+                serviceResult.ReturnObject = gameList;
+            }
+            else
+            {
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+            }
+
+            return serviceResult;
         }
 
         private string BuildUrl(string endpoint, string q = "")

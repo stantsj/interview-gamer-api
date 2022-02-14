@@ -5,7 +5,7 @@ namespace GamerAPI.Services
 {
     public interface IGameService
     {
-        Task<GameList> GetGames(string query, string sort);
-        Task<Game> GetGame(int gameId);
+        Task<ServiceResult<GameList>> GetGames(string query, string sort);
+        Task<ServiceResult<Game>> GetGame(int gameId);
     }
 }
