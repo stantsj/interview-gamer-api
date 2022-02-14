@@ -19,9 +19,9 @@ namespace GamerAPI.Controllers
 
         // GET: /<Controller>
         [HttpGet]
-        public async Task<ActionResult<GameList>> GetGames([Required]string q, string? sort)
+        public async Task<ActionResult<Games>> GetGames([Required]string q, string? sort)
         {
-            var res = await _gameService.GetGames(q, sort);
+            var res = await _gameService.GetGamesResponseDTO(q, sort);
 
             switch (res.StatusCode)
             {
@@ -36,9 +36,9 @@ namespace GamerAPI.Controllers
 
         // GET: /games/12345
         [HttpGet("{gameId}")]
-        public async Task<ActionResult<Game>> GetGame(int gameId)
+        public async Task<ActionResult<GameResponseDTO>> GetGame(int gameId)
         { 
-            var res = await _gameService.GetGame(gameId);
+            var res = await _gameService.GetGameResponseDTO(gameId);
 
             switch (res.StatusCode)
             {

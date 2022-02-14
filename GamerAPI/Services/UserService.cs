@@ -9,11 +9,13 @@ namespace GamerAPI.Services
     {
         private readonly UserContext _context;
         private readonly IGameService _gameService;
+        private readonly IMappingService _mappingService;
 
-        public UserService(UserContext context, IGameService gameService)
+        public UserService(UserContext context, IGameService gameService, IMappingService mappingService)
         {
             _context = context;
             _gameService = gameService;
+            _mappingService = mappingService;
         }
 
         public async Task<ServiceResult<List<User>>> GetUsers()
@@ -147,9 +149,11 @@ namespace GamerAPI.Services
             // Check to see if the user already has the game
             try
             {
-                user.Games.Add(res.ReturnObject);
+                var game = res.ReturnObject;
+                user.Games.Add(game);
                 _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+
                 serviceResult.StatusCode = HttpStatusCode.NoContent;
                 return serviceResult;
             }

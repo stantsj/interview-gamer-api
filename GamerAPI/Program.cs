@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMappingService, MappingService>();
 
 builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 
