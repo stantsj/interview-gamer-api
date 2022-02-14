@@ -6,11 +6,11 @@ namespace GamerAPI.Services
 {
     public interface IUserService
     {
-        Task<ActionResult<IEnumerable<User>>> GetUsers();
-        Task<User> GetUser(int userId);
-        Task<User> PostUser(User user);
-        Task<HttpStatusCode> PostUserGame(int gameId, GameRequestDTO gameRequestDTO);
-        Task<HttpStatusCode> DeleteUserGame(int userId,int gameId);
+        Task<ServiceResult<List<User>>> GetUsers();
+        Task<ServiceResult<User>> GetUser(int userId);
+        Task<ServiceResult<User>> PostUser(User user);
+        Task<ServiceResult<User>> PostUserGame(int gameId, GameRequestDTO gameRequestDTO);
+        Task<ServiceResult<User>> DeleteUserGame(int userId,int gameId);
         Task<ServiceResult<UserGameComparisonResponseDTO>> GetUserGameComparison(int userId, UserGameComparisonRequestDTO userGameComparisonRequestDTO);
     }
 }

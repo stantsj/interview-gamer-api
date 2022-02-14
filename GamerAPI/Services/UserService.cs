@@ -16,15 +16,39 @@ namespace GamerAPI.Services
             _gameService = gameService;
         }
 
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ServiceResult<List<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var serviceResult = new ServiceResult<List<User>>();
+
+            var users = await _context.Users.ToListAsync();
+
+            if (users == null)
+            {
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+            }
+
+            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.ReturnObject = users;
+
+            return serviceResult;
         }
 
         // Get a user matching the specified userId.
-        public async Task<User> GetUser(int userId)
+        public async Task<ServiceResult<User>> GetUser(int userId)
         {
-            return await _context.Users.FindAsync(userId);
+            var serviceResult = new ServiceResult<User>();
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+            }
+
+            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.ReturnObject = user;
+
+            return serviceResult;
         }
 
         public async Task<ServiceResult<UserGameComparisonResponseDTO>> GetUserGameComparison(int userId, UserGameComparisonRequestDTO request)
@@ -78,22 +102,37 @@ namespace GamerAPI.Services
             return serviceResult;
         }
 
-        public async Task<User> PostUser(User user)
+        public async Task<ServiceResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return user;
+            var serviceResult = new ServiceResult<User>();
+
+            try
+            {
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                serviceResult.StatusCode = HttpStatusCode.Created;
+                serviceResult.ReturnObject = user;
+            }
+            catch (Exception ex)
+            {
+                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            return serviceResult;
         }
 
         // Add a game to the user's list of favorite games.
-        public async Task<HttpStatusCode> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
+        public async Task<ServiceResult<User>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
+            var serviceResult = new ServiceResult<User>();
+
             // Check to see if the user exists
             var user = await _context.Users.FindAsync(userId);
             
             if (user == null)
             {
-                return HttpStatusCode.NotFound;
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
             }
 
             // Check to see if the game exists
@@ -101,7 +140,8 @@ namespace GamerAPI.Services
 
             if (game == null)
             {
-                return HttpStatusCode.BadRequest;
+                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+                return serviceResult;
             }
 
             // Check to see if the user already has the game
@@ -110,23 +150,28 @@ namespace GamerAPI.Services
                 user.Games.Add(game);
                 _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-                return HttpStatusCode.NoContent;
+                serviceResult.StatusCode = HttpStatusCode.NoContent;
+                return serviceResult;
             }
             catch
             {
-                return HttpStatusCode.Conflict;
+                serviceResult.StatusCode = HttpStatusCode.Conflict;
+                return serviceResult;
             }
         }
 
         // Remove a game from the user's list of favorite games.
-        public async Task<HttpStatusCode> DeleteUserGame(int userId, int gameId)
+        public async Task<ServiceResult<User>> DeleteUserGame(int userId, int gameId)
         {
+            var serviceResult = new ServiceResult<User>();
+
             var user = await _context.Users.FindAsync(userId);
 
             // Check to see if the user exists
             if (user == null)
             {
-                return HttpStatusCode.NotFound;
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
             }
 
             // Remove a game from the user's list
@@ -135,18 +180,21 @@ namespace GamerAPI.Services
             // Return 404 if no game is found
             if (game == null)
             {
-                return HttpStatusCode.NotFound;
+                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                return serviceResult;
             }
 
             try
             {
                 user.Games.Remove(game);
                 await _context.SaveChangesAsync();
-                return HttpStatusCode.NoContent;
+                serviceResult.StatusCode = HttpStatusCode.NoContent;
+                return serviceResult;
             }
             catch
             {
-                return HttpStatusCode.Conflict;
+                serviceResult.StatusCode = HttpStatusCode.Conflict;
+                return serviceResult;
             }
         }
 

@@ -16,12 +16,10 @@ namespace GamerAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserContext _context;
         private readonly IUserService _userService;
 
-        public UsersController(UserContext context, IUserService userService)
+        public UsersController(IUserService userService)
         {
-            _context = context;
             _userService = userService;
         }
 
@@ -29,21 +27,34 @@ namespace GamerAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _userService.GetUsers();
+            var res = await _userService.GetUsers();
+
+            switch (res.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.OK:
+                    return Ok(res.ReturnObject);
+                default:
+                    return NotFound();
+            }
         }
 
         // GET: users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userService.GetUser(id);
+            var res = await _userService.GetUser(id);
 
-            if (user == null)
+            switch (res.StatusCode)
             {
-                return NotFound();
+                case HttpStatusCode.NotFound:
+                    return NotFound();
+                case HttpStatusCode.OK:
+                    return Ok(res.ReturnObject);
+                default:
+                    return NotFound();
             }
-
-            return user;
         }
 
         // POST: users
@@ -51,17 +62,26 @@ namespace GamerAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            var response = await _userService.PostUser(user);
-            return CreatedAtAction("GetUser", new { id = response.UserId }, response);
+            var res = await _userService.PostUser(user);
+
+            switch (res.StatusCode)
+            {
+                case HttpStatusCode.BadRequest:
+                    return BadRequest();
+                case HttpStatusCode.Created:
+                    return CreatedAtAction("GetUser", new { id = res.ReturnObject.UserId }, res.ReturnObject);
+                default:
+                    return NotFound();
+            }
         }
 
         // POST: users/:userId/games
         [HttpPost("{userId}/games")]
-        public async Task<ActionResult<User>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
+        public async Task<IActionResult> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
             var res = await _userService.PostUserGame(userId, gameRequestDTO);
 
-            switch(res)
+            switch(res.StatusCode)
             {
                 case HttpStatusCode.NotFound:
                     return NotFound();
@@ -103,7 +123,7 @@ namespace GamerAPI.Controllers
         {
             var res = await _userService.DeleteUserGame(userId, gameId);
 
-            switch (res)
+            switch (res.StatusCode)
             {
                 case HttpStatusCode.NotFound:
                     return NotFound();
