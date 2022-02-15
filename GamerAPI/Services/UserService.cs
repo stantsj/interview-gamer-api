@@ -1,6 +1,5 @@
 ﻿using GamerAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 namespace GamerAPI.Services
 {
@@ -26,7 +25,7 @@ namespace GamerAPI.Services
 
             if (users == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
@@ -35,7 +34,7 @@ namespace GamerAPI.Services
                 list.Add(_mappingService.UserToUserResponseDTO(user));
             }
 
-            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.StatusCode = ServiceStatusCode.Success;
             serviceResult.ReturnObject = list;
 
             return serviceResult;
@@ -50,11 +49,11 @@ namespace GamerAPI.Services
 
             if (user == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
-            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.StatusCode = ServiceStatusCode.Success;
             serviceResult.ReturnObject = _mappingService.UserToUserResponseDTO(user);
 
             return serviceResult;
@@ -69,7 +68,7 @@ namespace GamerAPI.Services
 
             if (user == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
@@ -80,7 +79,7 @@ namespace GamerAPI.Services
 
             if (otherUser == null || !ValidateUserComparisonRequest(comparison))
             {
-                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+                serviceResult.StatusCode = ServiceStatusCode.ValidationError;
                 return serviceResult;
             }
 
@@ -108,7 +107,7 @@ namespace GamerAPI.Services
                     break;
             }
 
-            serviceResult.StatusCode = HttpStatusCode.OK;
+            serviceResult.StatusCode = ServiceStatusCode.Success;
             serviceResult.ReturnObject = returnObject;
 
             return serviceResult;
@@ -128,12 +127,12 @@ namespace GamerAPI.Services
             {
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                serviceResult.StatusCode = HttpStatusCode.Created;
+                serviceResult.StatusCode = ServiceStatusCode.Success;
                 serviceResult.ReturnObject = _mappingService.UserToUserResponseDTO(user);
             }
             catch (Exception ex)
             {
-                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+                serviceResult.StatusCode = ServiceStatusCode.Failure;
             }
 
             return serviceResult;
@@ -149,7 +148,7 @@ namespace GamerAPI.Services
             
             if (user == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
@@ -158,7 +157,7 @@ namespace GamerAPI.Services
 
             if (res.ReturnObject == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.BadRequest;
+                serviceResult.StatusCode = ServiceStatusCode.ValidationError;
                 return serviceResult;
             }
 
@@ -170,12 +169,12 @@ namespace GamerAPI.Services
                 _context.Entry(user).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
-                serviceResult.StatusCode = HttpStatusCode.NoContent;
+                serviceResult.StatusCode = ServiceStatusCode.Success;
                 return serviceResult;
             }
             catch
             {
-                serviceResult.StatusCode = HttpStatusCode.Conflict;
+                serviceResult.StatusCode = ServiceStatusCode.Failure;
                 return serviceResult;
             }
         }
@@ -190,7 +189,7 @@ namespace GamerAPI.Services
             // Check to see if the user exists
             if (user == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
@@ -200,7 +199,7 @@ namespace GamerAPI.Services
             // Return 404 if no game is found
             if (game == null)
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
                 return serviceResult;
             }
 
@@ -208,12 +207,12 @@ namespace GamerAPI.Services
             {
                 user.Games.Remove(game);
                 await _context.SaveChangesAsync();
-                serviceResult.StatusCode = HttpStatusCode.NoContent;
+                serviceResult.StatusCode = ServiceStatusCode.Success;
                 return serviceResult;
             }
             catch
             {
-                serviceResult.StatusCode = HttpStatusCode.Conflict;
+                serviceResult.StatusCode = ServiceStatusCode.Failure;
                 return serviceResult;
             }
         }

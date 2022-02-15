@@ -31,8 +31,8 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.OK => Ok(res.ReturnObject),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.Success => Ok(res.ReturnObject),
                 _ => NotFound(),
             };
         }
@@ -45,8 +45,8 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.OK => Ok(res.ReturnObject),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.Success => Ok(res.ReturnObject),
                 _ => NotFound(),
             };
         }
@@ -59,8 +59,8 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.BadRequest => BadRequest(),
-                HttpStatusCode.Created => CreatedAtAction("GetUser", new { id = res.ReturnObject.UserId }, res.ReturnObject),
+                ServiceStatusCode.Failure => BadRequest(),
+                ServiceStatusCode.Success => CreatedAtAction("GetUser", new { id = res.ReturnObject.UserId }, res.ReturnObject),
                 _ => NotFound(),
             };
         }
@@ -73,10 +73,10 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.BadRequest => BadRequest(),
-                HttpStatusCode.Conflict => Conflict(),
-                HttpStatusCode.NoContent => NoContent(),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.ValidationError => BadRequest(),
+                ServiceStatusCode.Failure => Conflict(),
+                ServiceStatusCode.Success => NoContent(),
                 _ => NotFound(),
             };
         }
@@ -89,10 +89,9 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.BadRequest => BadRequest(),
-                HttpStatusCode.Conflict => Conflict(),
-                HttpStatusCode.OK => Ok(res.ReturnObject),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.ValidationError => BadRequest(),
+                ServiceStatusCode.Success => Ok(res.ReturnObject),
                 _ => NotFound(),
             };
         }
@@ -105,9 +104,9 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.Conflict => Conflict(),
-                HttpStatusCode.NoContent => NoContent(),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.Failure => Conflict(),
+                ServiceStatusCode.Success => NoContent(),
                 _ => NotFound(),
             };
         }

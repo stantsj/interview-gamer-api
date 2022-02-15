@@ -1,7 +1,4 @@
 ﻿using GamerAPI.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Text.Json;
 
 namespace GamerAPI.Services
 {
@@ -40,12 +37,12 @@ namespace GamerAPI.Services
             {
                 var game = await res.Content.ReadFromJsonAsync<Game>();
 
-                serviceResult.StatusCode = HttpStatusCode.OK;
+                serviceResult.StatusCode = ServiceStatusCode.Success;
                 serviceResult.ReturnObject = game;
             }
             else
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
             }
 
             return serviceResult;
@@ -86,12 +83,12 @@ namespace GamerAPI.Services
             if (res.IsSuccessStatusCode)
             {
                 var gameList = await res.Content.ReadFromJsonAsync<Games>();
-                serviceResult.StatusCode = HttpStatusCode.OK;
+                serviceResult.StatusCode = ServiceStatusCode.Success;
                 serviceResult.ReturnObject = gameList;
             }
             else
             {
-                serviceResult.StatusCode = HttpStatusCode.NotFound;
+                serviceResult.StatusCode = ServiceStatusCode.NotFound;
             }
 
             return serviceResult;

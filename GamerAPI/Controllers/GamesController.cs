@@ -25,8 +25,8 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.OK => Ok(res.ReturnObject.Results),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.Success => Ok(res.ReturnObject.Results),
                 _ => NotFound(),
             };
         }
@@ -39,8 +39,8 @@ namespace GamerAPI.Controllers
 
             return res.StatusCode switch
             {
-                HttpStatusCode.NotFound => NotFound(),
-                HttpStatusCode.OK => Ok(res.ReturnObject),
+                ServiceStatusCode.NotFound => NotFound(),
+                ServiceStatusCode.Success => Ok(res.ReturnObject),
                 _ => NotFound(),
             };
         }
