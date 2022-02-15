@@ -23,15 +23,12 @@ namespace GamerAPI.Controllers
         {
             var res = await _gameService.GetGamesResponseDTO(q, sort);
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.OK:
-                    return Ok(res.ReturnObject.Results);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.OK => Ok(res.ReturnObject.Results),
+                _ => NotFound(),
+            };
         }
 
         // GET: /games/12345
@@ -40,15 +37,12 @@ namespace GamerAPI.Controllers
         { 
             var res = await _gameService.GetGameResponseDTO(gameId);
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.OK:
-                    return Ok(res.ReturnObject);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.OK => Ok(res.ReturnObject),
+                _ => NotFound(),
+            };
         }
     }
 }

@@ -25,53 +25,44 @@ namespace GamerAPI.Controllers
 
         // GET: users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserResponseDTO>>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             var res = await _userService.GetUsers();
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.OK:
-                    return Ok(res.ReturnObject);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.OK => Ok(res.ReturnObject),
+                _ => NotFound(),
+            };
         }
 
         // GET: users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseDTO>> GetUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
             var res = await _userService.GetUser(id);
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.OK:
-                    return Ok(res.ReturnObject);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.OK => Ok(res.ReturnObject),
+                _ => NotFound(),
+            };
         }
 
         // POST: users
         [HttpPost]
-        public async Task<ActionResult<UserResponseDTO>> PostUser(UserRequestDTO userRequestDTO)
+        public async Task<IActionResult> PostUser(UserRequestDTO userRequestDTO)
         {
             var res = await _userService.PostUser(userRequestDTO);
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.BadRequest:
-                    return BadRequest();
-                case HttpStatusCode.Created:
-                    return CreatedAtAction("GetUser", new { id = res.ReturnObject.UserId }, res.ReturnObject);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.BadRequest => BadRequest(),
+                HttpStatusCode.Created => CreatedAtAction("GetUser", new { id = res.ReturnObject.UserId }, res.ReturnObject),
+                _ => NotFound(),
+            };
         }
 
         // POST: users/:userId/games
@@ -80,40 +71,30 @@ namespace GamerAPI.Controllers
         {
             var res = await _userService.PostUserGame(userId, gameRequestDTO);
 
-            switch(res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.BadRequest:
-                    return BadRequest();
-                case HttpStatusCode.Conflict:
-                    return Conflict();
-                case HttpStatusCode.NoContent:
-                    return NoContent();
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.BadRequest => BadRequest(),
+                HttpStatusCode.Conflict => Conflict(),
+                HttpStatusCode.NoContent => NoContent(),
+                _ => NotFound(),
+            };
         }
 
         // POST: users/:userId/comparison
         [HttpPost("{userId}/comparison")]
-        public async Task<ActionResult<UserGameComparisonResponseDTO>> PostUserGameComparison(int userId, UserGameComparisonRequestDTO userGameComparisonRequestDTO)
+        public async Task<IActionResult> PostUserGameComparison(int userId, UserGameComparisonRequestDTO userGameComparisonRequestDTO)
         {
             var res = await _userService.GetUserGameComparison(userId, userGameComparisonRequestDTO);
-            
-            switch (res.StatusCode)
+
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.BadRequest:
-                    return BadRequest();
-                case HttpStatusCode.Conflict:
-                    return Conflict();
-                case HttpStatusCode.OK:
-                    return Ok(res.ReturnObject);
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.BadRequest => BadRequest(),
+                HttpStatusCode.Conflict => Conflict(),
+                HttpStatusCode.OK => Ok(res.ReturnObject),
+                _ => NotFound(),
+            };
         }
 
         // DELETE: users/:userId/games/:gameId
@@ -122,17 +103,13 @@ namespace GamerAPI.Controllers
         {
             var res = await _userService.DeleteUserGame(userId, gameId);
 
-            switch (res.StatusCode)
+            return res.StatusCode switch
             {
-                case HttpStatusCode.NotFound:
-                    return NotFound();
-                case HttpStatusCode.Conflict:
-                    return Conflict();
-                case HttpStatusCode.NoContent:
-                    return NoContent();
-                default:
-                    return NotFound();
-            }
+                HttpStatusCode.NotFound => NotFound(),
+                HttpStatusCode.Conflict => Conflict(),
+                HttpStatusCode.NoContent => NoContent(),
+                _ => NotFound(),
+            };
         }
     }
 }
