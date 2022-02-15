@@ -1,8 +1,6 @@
 ﻿using GamerAPI.Models;
 using GamerAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
 
 namespace GamerAPI.Controllers
 {

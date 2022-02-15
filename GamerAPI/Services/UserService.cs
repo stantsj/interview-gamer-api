@@ -29,7 +29,7 @@ namespace GamerAPI.Services
                 return serviceResult;
             }
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 list.Add(_mappingService.UserToUserResponseDTO(user));
             }
@@ -148,7 +148,7 @@ namespace GamerAPI.Services
 
             // Check to see if the user exists
             var user = await _context.Users.FindAsync(userId);
-            
+
             if (user == null)
             {
                 serviceResult.StatusCode = ServiceStatusCode.NotFound;
@@ -197,7 +197,7 @@ namespace GamerAPI.Services
             }
 
             // Remove a game from the user's list
-            var game = user.Games.Find(x=> x.Id == gameId);
+            var game = user.Games.Find(x => x.Id == gameId);
 
             // Return 404 if no game is found
             if (game == null)

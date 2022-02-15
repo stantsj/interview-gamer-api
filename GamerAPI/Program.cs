@@ -1,6 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using GamerAPI.Models;
 using GamerAPI.Services;
+using Microsoft.EntityFrameworkCore;
+using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,11 @@ builder.Services.AddScoped<IMappingService, MappingService>();
 builder.Services.AddHttpClient<IGameService, GameService>(client =>
 {
     client.BaseAddress = new Uri(configuration["RAWG:BaseUrl"]);
-});
+})
+    .AddTransientHttpErrorPolicy(policy =>
+        policy.WaitAndRetryAsync(2, _ => TimeSpan.FromSeconds(2)))
+    .AddTransientHttpErrorPolicy(policy =>
+        policy.CircuitBreakerAsync(2, TimeSpan.FromSeconds(5)));
 
 builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 

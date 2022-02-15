@@ -2,6 +2,6 @@
 {
     public class GamesResponseDTO
     {
-        public IEnumerable<GameResponseDTO> Results { get; set;}
+        public IEnumerable<GameResponseDTO> Results { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GamerAPI.Models
+﻿namespace GamerAPI.Models
 {
     public class GameRequestDTO
     {

@@ -1,5 +1,4 @@
 ﻿using GamerAPI.Models;
-using System.Text.RegularExpressions;
 
 namespace GamerAPI.Services
 {
@@ -16,22 +15,21 @@ namespace GamerAPI.Services
         private static readonly string[] _validSortValues =
         {
             "name",
-            "-name", 
+            "-name",
             "released",
             "-released",
             "added",
-            "-added", 
+            "-added",
             "created",
-            "-created", 
+            "-created",
             "updated",
-            "-updated", 
+            "-updated",
             "rating",
-            "-rating", 
+            "-rating",
             "metacritic",
             "-metacritic"
         };
 
-        // TODO: use IHttpClientFactory
         public GameService(IConfiguration configuration, IMappingService mappingService, HttpClient httpClient)
         {
             _configuration = configuration;

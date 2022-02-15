@@ -1,5 +1,4 @@
 ﻿using GamerAPI.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GamerAPI.Services
 {

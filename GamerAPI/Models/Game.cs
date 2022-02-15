@@ -1,7 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace GamerAPI.Models
+﻿namespace GamerAPI.Models
 {
     public record Game
     {

@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace GamerAPI.Models
+﻿namespace GamerAPI.Models
 {
     public class ServiceResult<T>
     {
