@@ -13,6 +13,5 @@ namespace GamerAPI.Models
         public decimal Rating { get; set; }
         public string Released { get; set; }
         public string Updated { get; set; }
-
     }
 }

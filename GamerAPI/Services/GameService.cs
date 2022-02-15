@@ -10,7 +10,6 @@ namespace GamerAPI.Services
         private readonly IMappingService _mappingService;
 
         private const string RAWG_API_KEY_CONFIG = "RAWG:ApiKey";
-        private const string RAWG_BASE_URL_CONFIG = "RAWG:BaseUrl";
 
         private readonly string _apiKey;
 
@@ -33,16 +32,13 @@ namespace GamerAPI.Services
         };
 
         // TODO: use IHttpClientFactory
-        public GameService(IConfiguration configuration, IMappingService mappingService)
+        public GameService(IConfiguration configuration, IMappingService mappingService, HttpClient httpClient)
         {
             _configuration = configuration;
             _mappingService = mappingService;
             _apiKey = _configuration[RAWG_API_KEY_CONFIG];
 
-            _httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(_configuration[RAWG_BASE_URL_CONFIG])
-            };
+            _httpClient = httpClient;
         }
 
         public async Task<ServiceResult<Game>> GetGame(int gameId)
