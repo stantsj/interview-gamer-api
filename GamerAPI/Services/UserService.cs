@@ -77,7 +77,7 @@ namespace GamerAPI.Services
             var otherUser = await _context.Users.FindAsync(request.OtherUserId);
             var comparison = request.Comparison;
 
-            if (otherUser == null || !ValidateUserComparisonRequest(comparison))
+            if (otherUser == null)
             {
                 serviceResult.StatusCode = ServiceStatusCode.ValidationError;
                 return serviceResult;
@@ -105,6 +105,9 @@ namespace GamerAPI.Services
                     var union = user.Games.Union(otherUser.Games).ToList();
                     returnObject.Games = _mappingService.GamesListToGamesResponseDTOList(union);
                     break;
+                default:
+                    serviceResult.StatusCode = ServiceStatusCode.ValidationError;
+                    return serviceResult;
             }
 
             serviceResult.StatusCode = ServiceStatusCode.Success;
@@ -215,12 +218,6 @@ namespace GamerAPI.Services
                 serviceResult.StatusCode = ServiceStatusCode.Failure;
                 return serviceResult;
             }
-        }
-
-        private bool ValidateUserComparisonRequest(string comparison)
-        {
-            var comparisons = new [] {"union", "intersection", "difference"};
-            return comparisons.Any(comparison.ToLower().Contains);
         }
     }
 }
