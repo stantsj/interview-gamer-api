@@ -20,9 +20,7 @@ builder.Services.AddHttpClient<IGameService, GameService>(client =>
     client.BaseAddress = new Uri(configuration["RAWG:BaseUrl"]);
 })
     .AddTransientHttpErrorPolicy(policy =>
-        policy.WaitAndRetryAsync(2, _ => TimeSpan.FromSeconds(2)))
-    .AddTransientHttpErrorPolicy(policy =>
-        policy.CircuitBreakerAsync(2, TimeSpan.FromSeconds(5)));
+        policy.WaitAndRetryAsync(2, _ => TimeSpan.FromSeconds(2)));
 
 builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("User"));
 

@@ -13,7 +13,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "games",
+      "launchUrl": "about",
       "applicationUrl": "https://localhost:7055;http://localhost:5055",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -22,7 +22,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "games",
+      "launchUrl": "about",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
