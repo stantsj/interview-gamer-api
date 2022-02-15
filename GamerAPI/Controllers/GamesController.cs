@@ -19,12 +19,13 @@ namespace GamerAPI.Controllers
 
         // GET: /<Controller>
         [HttpGet]
-        public async Task<ActionResult<Games>> GetGames([Required]string q, string? sort)
+        public async Task<IActionResult> GetGames(string q, string? sort)
         {
             var res = await _gameService.GetGamesResponseDTO(q, sort);
 
             return res.StatusCode switch
             {
+                ServiceStatusCode.ValidationError => BadRequest(),
                 ServiceStatusCode.NotFound => NotFound(),
                 ServiceStatusCode.Success => Ok(res.ReturnObject.Results),
                 _ => NotFound(),

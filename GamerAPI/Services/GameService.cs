@@ -1,4 +1,5 @@
 ﻿using GamerAPI.Models;
+using System.Text.RegularExpressions;
 
 namespace GamerAPI.Services
 {
@@ -12,6 +13,24 @@ namespace GamerAPI.Services
         private const string RAWG_BASE_URL_CONFIG = "RAWG:BaseUrl";
 
         private readonly string _apiKey;
+
+        private static readonly string[] _validSortValues =
+        {
+            "name",
+            "-name", 
+            "released",
+            "-released",
+            "added",
+            "-added", 
+            "created",
+            "-created", 
+            "updated",
+            "-updated", 
+            "rating",
+            "-rating", 
+            "metacritic",
+            "-metacritic"
+        };
 
         // TODO: use IHttpClientFactory
         public GameService(IConfiguration configuration, IMappingService mappingService)
@@ -64,17 +83,27 @@ namespace GamerAPI.Services
             return serviceResult;
         }
 
-        // TODO: Return a 400 Bad Request response if the q query parameter is missing, if the q query parameter is empty, or if the sort query parameter is invalid.
-        // TODO: The RAWG API returns lots of game metadata. Your responses should only include the JSON properties shown in the example.
         public async Task<ServiceResult<Games>> GetGames(string q, string sort = "")
         {
             var serviceResult = new ServiceResult<Games>();
 
+            // Return a 400 Bad Request response if the q query parameter is missing, if the q query parameter is empty, or if the sort query parameter is invalid.
+            if (string.IsNullOrEmpty(q))
+            {
+                serviceResult.StatusCode = ServiceStatusCode.ValidationError;
+                return serviceResult;
+            }
+
             var url = BuildUrl("games", $"&search={q}");
 
-            // TODO: validate the sort - Any value supported by the RAWG API method should be supported here (e.g. name, -name).
+            // validate the sort - Any value supported by the RAWG API method should be supported here (e.g. name, -name).        
             if (!string.IsNullOrEmpty(sort))
             {
+                if (!_validSortValues.Contains(sort))
+                {
+                    serviceResult.StatusCode = ServiceStatusCode.ValidationError;
+                    return serviceResult;
+                }
                 url += $"&ordering={sort}";
             }
 
