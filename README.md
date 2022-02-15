@@ -4,8 +4,8 @@ An API service that can be used to track and compare lists of users favorite vid
 
 ## Prerequisites
 
-* Visual Studio 2022 ([link](https://visualstudio.microsoft.com/vs/#download)) with the ASP.NET and web development workload
-* A RAWG Api Key ([link](https://rawg.io/))
+* ([Visual Studio 2022](https://visualstudio.microsoft.com/vs/#download)) with the ASP.NET and web development workload
+* ([A RAWG Api Key](https://rawg.io/))
 
 ## Configuration 
 
