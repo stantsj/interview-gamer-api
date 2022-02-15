@@ -17,7 +17,7 @@ namespace GamerAPI.Controllers
             _gameService = gameService;
         }
 
-        // GET: /<Controller>
+        // GET: /Games
         [HttpGet]
         public async Task<IActionResult> GetGames(string q, string? sort)
         {
@@ -28,20 +28,6 @@ namespace GamerAPI.Controllers
                 ServiceStatusCode.ValidationError => BadRequest(),
                 ServiceStatusCode.NotFound => NotFound(),
                 ServiceStatusCode.Success => Ok(res.ReturnObject.Results),
-                _ => NotFound(),
-            };
-        }
-
-        // GET: /games/12345
-        [HttpGet("{gameId}")]
-        public async Task<ActionResult<GameResponseDTO>> GetGame(int gameId)
-        { 
-            var res = await _gameService.GetGameResponseDTO(gameId);
-
-            return res.StatusCode switch
-            {
-                ServiceStatusCode.NotFound => NotFound(),
-                ServiceStatusCode.Success => Ok(res.ReturnObject),
                 _ => NotFound(),
             };
         }

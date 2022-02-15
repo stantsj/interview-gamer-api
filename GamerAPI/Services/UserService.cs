@@ -116,7 +116,7 @@ namespace GamerAPI.Services
             return serviceResult;
         }
 
-        public async Task<ServiceResult<UserResponseDTO>> PostUser(UserRequestDTO userRequestDTO)
+        public async Task<ServiceResult<UserResponseDTO>> CreateUser(UserRequestDTO userRequestDTO)
         {
             var serviceResult = new ServiceResult<UserResponseDTO>();
 
@@ -142,7 +142,7 @@ namespace GamerAPI.Services
         }
 
         // Add a game to the user's list of favorite games.
-        public async Task<ServiceResult<UserResponseDTO>> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
+        public async Task<ServiceResult<UserResponseDTO>> AddUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
             var serviceResult = new ServiceResult<UserResponseDTO>();
 

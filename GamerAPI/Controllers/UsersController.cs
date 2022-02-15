@@ -55,7 +55,7 @@ namespace GamerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostUser(UserRequestDTO userRequestDTO)
         {
-            var res = await _userService.PostUser(userRequestDTO);
+            var res = await _userService.CreateUser(userRequestDTO);
 
             return res.StatusCode switch
             {
@@ -69,7 +69,7 @@ namespace GamerAPI.Controllers
         [HttpPost("{userId}/games")]
         public async Task<IActionResult> PostUserGame(int userId, GameRequestDTO gameRequestDTO)
         {
-            var res = await _userService.PostUserGame(userId, gameRequestDTO);
+            var res = await _userService.AddUserGame(userId, gameRequestDTO);
 
             return res.StatusCode switch
             {
